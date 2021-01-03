@@ -40,13 +40,23 @@ public class JoinHandler implements CommandHandler {
 		String name = req.getParameter("name");
 		String birth = req.getParameter("birth");
 		String gender = req.getParameter("gender");
-		String email = req.getParameter("email");
-		String phone = req.getParameter("phone");
+		
+		String email1 = req.getParameter("email1");
+		String email2 = req.getParameter("email2");
+		
+		String email = email1+"@"+email2;
+		
+		String phone1 = req.getParameter("phone1");
+		String phone2 = req.getParameter("phone2");
+		String phone3 = req.getParameter("phone3");
+		
+		String phone = phone1+"-"+phone2+"-"+phone3;
 		
 		JoinRequest joinReq = new JoinRequest();
 		
 		joinReq.setMemberId(memberId);
 		joinReq.setPassword(password);
+		joinReq.setConfirmPassword(confirmPassword);
 		joinReq.setName(name);
 		joinReq.setBirth(birth);
 		joinReq.setGender(gender);
@@ -57,8 +67,22 @@ public class JoinHandler implements CommandHandler {
 		Map<String, Boolean> errors = new HashMap<>();
 		req.setAttribute("errors", errors);
 		
+		joinReq.validate(errors);
+		
+		if (phone1 == null || phone1.isEmpty() || phone2 == null || phone2.isEmpty()) {
+			errors.put("phoneIsnull", true);
+		}
+		
+		if (email1 == null || email1.isEmpty() || email2 == null || email2.isEmpty()) {
+			errors.put("emailnull", true);
+		}
+		
 		if (!password.equals(confirmPassword)) {
 			errors.put("pwdNotMacth", true);
+			return FORM_VIEW;
+		}
+		
+		if (!errors.isEmpty()) {
 			return FORM_VIEW;
 		}
 		

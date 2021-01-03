@@ -1,5 +1,6 @@
 package member.command;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +41,7 @@ public class MemberModifyHandler implements CommandHandler {
 		return null;
 	}
 
-	private String postProcess(HttpServletRequest req, HttpServletResponse res) {
+	private String postProcess(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		String confirmPw = req.getParameter("confirmPw");
 		String password = req.getParameter("password");
 		String id = req.getParameter("id");
@@ -64,8 +65,8 @@ public class MemberModifyHandler implements CommandHandler {
 		
 		if (m != null) {
 			modifyService.memberUpdate(m);
-			getProcess(req, res);
-			return FORM_VIEW;
+			res.sendRedirect("memberView?id="+id);
+			return null;
 		}
 		return FORM_VIEW;
 		

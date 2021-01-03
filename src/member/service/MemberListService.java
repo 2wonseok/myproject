@@ -31,7 +31,6 @@ public class MemberListService {
 			List<Member> list = memberDao.selectSearch(conn, searchKeyword, searchField, pageNo, size, total);
 			
 			return new ListPage(total, pageNo, size, list);
-			
 		} catch(SQLException e) {
 			throw new RuntimeException(e);
 		}

@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,6 +48,9 @@ public class PictureBoardWriterHandler implements CommandHandler {
 //		String savaPath = "C:\\imgfile";
 		String savaPath = "C:\\Users\\이원석\\Documents\\myworkspace\\eclipse-workspace\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\myproject\\upload";
 		
+		Map<String, Boolean> errors = new HashMap<>();
+		req.setAttribute("errors", errors);
+		
 		try {
 			
 			multi = new MultipartRequest(req, savaPath, sizeLimit, "utf-8", new DefaultFileRenamePolicy());
@@ -55,14 +60,13 @@ public class PictureBoardWriterHandler implements CommandHandler {
 		}
 		
 		String fileName= multi.getFilesystemName("uploardfile");
-		
 		String memberid = multi.getParameter("id");
 		String name = multi.getParameter("name");
 		String title = multi.getParameter("title");
 		String body = multi.getParameter("content");
 		
-		int count = 0;
-		String regip = req.getRemoteAddr();
+//		int count = 0;
+//		String regip = req.getRemoteAddr();
 		
 		PictureBoard pb = new PictureBoard();
 		pb.setMemberid(memberid);
@@ -71,13 +75,19 @@ public class PictureBoardWriterHandler implements CommandHandler {
 		pb.setBody(body);
 		pb.setUploadFile(fileName);
 		
-		if (title != null && !title.isEmpty()) {
-			pictureBoardWriter.insert(pb);	
-			res.sendRedirect("pictureBoard.do");
-			return null;
+		if (title == null || title.isEmpty()) {
+			errors.put("notitle", true);
+			return FORM_VIEW;
 		}
 		
-		return FORM_VIEW;
+		if (fileName == null || fileName.isEmpty()) {
+			errors.put("nofile", true);
+			return FORM_VIEW;
+		}
+		
+		pictureBoardWriter.insert(pb);	
+		res.sendRedirect("pictureBoard");
+		return null;
 	}
 
 }

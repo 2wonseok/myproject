@@ -37,7 +37,9 @@ public class BoardDao {
 		ResultSet rs = null;
 		
 		String sql = "SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY regdate DESC) rn, notice, post_no, memberid, name, title, "
-				+"body, regdate, read_cnt, like_cnt, moddate FROM freeboard ORDER BY notice ASC, rn ASC) "
+				+"body, regdate, read_cnt, like_cnt, moddate, "
+				+"(SELECT COUNT(*) FROM boardreply A WHERE A.post_no = B.post_no) as replycnt "
+				+ "FROM freeboard B ORDER BY notice ASC, rn ASC) "
 				+"WHERE rn BETWEEN ? AND ?";
 
 		try {
@@ -59,6 +61,7 @@ public class BoardDao {
 				content.setReadCnt(rs.getInt("read_cnt"));
 				content.setLikeCnt(rs.getInt("like_cnt"));
 				content.setNotice(rs.getInt("notice"));
+				content.setReplyCnt(rs.getInt("replycnt"));
 				
 				boardContents.add(content);
 			}
@@ -125,7 +128,7 @@ public class BoardDao {
 				fb.setModDate(rs.getDate(7));
 				fb.setReadCnt(rs.getInt(8));
 				fb.setLikeCnt(rs.getInt(9));
-				fb.setNotice(rs.getInt(9));
+				fb.setNotice(rs.getInt(10));
 				
 			}
 			return fb;
@@ -139,9 +142,12 @@ public class BoardDao {
 	public void postUpdate(Connection conn, FreeBoard fb) throws SQLException {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		
-		String sql = "UPDATE freeboard SET title = ?, body = ?, moddate = SYSDATE WHERE post_no = ?";
-		
+		String sql = "";
+		if (fb.getNotice() == 0) {
+			sql = "UPDATE freeboard SET title = ?, body = ?, moddate = SYSDATE, notice = 0 WHERE post_no = ?";
+		} else {
+			sql = "UPDATE freeboard SET title = ?, body = ?, moddate = SYSDATE, notice = 1 WHERE post_no = ?";
+		}
 		try {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, fb.getTitle());
@@ -204,16 +210,19 @@ public class BoardDao {
 		String sql = "";
 		
 		if (total > 10) {
-			sql = "SELECT post_no, memberid, name, title, body, regdate, moddate, read_cnt, like_cnt, notice "
+			sql = "SELECT post_no, memberid, name, title, body, regdate, moddate, read_cnt, like_cnt, notice, replycnt "
 				+"FROM (SELECT ROW_NUMBER() OVER (ORDER BY regdate DESC) "
-				+"rn, post_no, memberid, name, title, body, regdate, moddate, read_cnt, like_cnt, notice "
-				+"FROM freeboard ORDER BY notice ASC, rn ASC) "
+				+"rn, post_no, memberid, name, title, body, regdate, moddate, read_cnt, like_cnt, notice, "
+				+"(SELECT COUNT(*) FROM boardreply A WHERE A.post_no = B.post_no) as replycnt "
+				+"FROM freeboard B ORDER BY notice ASC, rn ASC) "
 				+"WHERE "+searchKeyword+" LIKE '%"+searchField+"%' AND rn BETWEEN "+startPage+" AND "+endPage;
 			
 		} else {
-			sql = "SELECT post_no, memberid, name, title, body, regdate, moddate, read_cnt, like_cnt, notice FROM (SELECT ROW_NUMBER() OVER (ORDER BY regdate DESC) "
-					+"rn, post_no, memberid, name, title, body, regdate, moddate, read_cnt, like_cnt, notice "
-					+"FROM freeboard ORDER BY notice ASC, rn ASC) "
+			sql = "SELECT post_no, memberid, name, title, body, regdate, moddate, read_cnt, like_cnt, notice, replycnt "
+					+"FROM (SELECT ROW_NUMBER() OVER (ORDER BY regdate DESC) "
+					+"rn, post_no, memberid, name, title, body, regdate, moddate, read_cnt, like_cnt, notice, "
+					+"(SELECT COUNT(*) FROM boardreply A WHERE A.post_no = B.post_no) as replycnt "
+					+"FROM freeboard B ORDER BY notice ASC, rn ASC) "
 					+"WHERE "+searchKeyword+" LIKE '%"+searchField+"%'";
 		}
 		
@@ -235,7 +244,8 @@ public class BoardDao {
 				fb.setModDate(rs.getDate(7));
 				fb.setReadCnt(rs.getInt(8));
 				fb.setLikeCnt(rs.getInt(9));
-				fb.setNotice(rs.getInt(9));
+				fb.setNotice(rs.getInt(10));
+				fb.setReplyCnt(rs.getInt(11));
 				freeBoard.add(fb);
 			}
 			return freeBoard;
@@ -259,6 +269,62 @@ public class BoardDao {
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setInt(1, post_no);
 			pstmt.executeUpdate();
+		}
+	}
+
+	public List<FreeBoard> getMainPage(Connection conn) throws SQLException {
+		Statement stmt = null;
+		ResultSet rs = null;
+		
+		String sql = "SELECT title, regdate, post_no FROM freeboard WHERE ROWNUM <= 8 AND notice=0  ORDER BY regdate DESC";
+
+		try {
+			stmt = conn.createStatement();
+
+			rs = stmt.executeQuery(sql);
+			
+			List<FreeBoard> mainList = new ArrayList<>();
+			while (rs.next()) {
+				FreeBoard main = new FreeBoard();
+				main.setTitle(rs.getString(1));
+				main.setRegDate(rs.getDate(2));
+				main.setPost_no(rs.getInt(3));
+				
+				mainList.add(main);
+			}
+			
+			return mainList;
+			
+		} finally {
+			JdbcUtil.close(rs, stmt);
+		}
+	}
+
+	public List<FreeBoard> getSubPage(Connection conn) throws SQLException {
+		Statement stmt = null;
+		ResultSet rs = null;
+		
+		String sql = "SELECT title, regdate, post_no FROM freeboard WHERE ROWNUM <= 8 AND notice=1  ORDER BY regdate DESC";
+
+		try {
+			stmt = conn.createStatement();
+
+			rs = stmt.executeQuery(sql);
+			
+			List<FreeBoard> mainList = new ArrayList<>();
+			while (rs.next()) {
+				FreeBoard main = new FreeBoard();
+				main.setTitle(rs.getString(1));
+				main.setRegDate(rs.getDate(2));
+				main.setPost_no(rs.getInt(3));
+				
+				mainList.add(main);
+			}
+			
+			return mainList;
+			
+		} finally {
+			JdbcUtil.close(rs, stmt);
 		}
 	}
 

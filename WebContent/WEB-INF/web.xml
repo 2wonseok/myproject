@@ -37,7 +37,7 @@
 	
 	<servlet-mapping>
 		<servlet-name>ControllerUsingURI</servlet-name>
-		<url-pattern>*.do</url-pattern>
+		<url-pattern>/LwsProject/*</url-pattern>
 	</servlet-mapping>
 	
 	<filter>
@@ -47,12 +47,15 @@
 	
 	<filter-mapping>
 		<filter-name>LoginCheckFilter</filter-name>
-		<url-pattern>/memberList.do</url-pattern>
-		<url-pattern>/remove.do</url-pattern>
-		<url-pattern>/find.do</url-pattern>
-		<url-pattern>/memberView.do</url-pattern>
-		<url-pattern>/freeBoardWrite.do</url-pattern>
-		<url-pattern>/pictureBoardWrite.do</url-pattern>
+		<url-pattern>/LwsProject/memberList</url-pattern>
+		<url-pattern>/LwsProject/remove</url-pattern>
+		<url-pattern>/LwsProject/memberView</url-pattern>
+		<url-pattern>/LwsProject/freeBoardWrite</url-pattern>
+		<url-pattern>/LwsProject/freeBoardView</url-pattern>
+		<url-pattern>/LwsProject/pictureBoardWrite</url-pattern>
+		<url-pattern>/LwsProject/pictureBoardView</url-pattern>
+		<url-pattern>/LwsProject/noticeBoardWrite</url-pattern>
+		<url-pattern>/LwsProject/noticeBoardView</url-pattern>
 	</filter-mapping>
 	
 </web-app>

@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="u" tagdir="/WEB-INF/tags" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,48 +11,82 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="https://kit.fontawesome.com/a076d05399.js"></script>
-<title>Insert title here</title>
+<link href="${root }/logoimage/mainlogo.png" rel="shortcut icon" type="image/x-icon">
+<title>이원석 프로젝트</title>
 </head>
+<style>
+	.container-fluid h2 {
+		text-align: center;
+		padding : 64px;
+		color: #fff;
+		letter-spacing: -6px;
+		font-size: 48px;
+	}
+	#container {
+    clear: both;
+    position: relative;
+    margin: 50px auto 0px;
+    padding: 0 0 50px 0;
+    width: 700px;
+    z-index: 1;
+	}
+	#btn_add {
+    color: #fff;
+    font-size: 15px;
+    border: none;
+    background: #1e263c;
+    padding: 0px 50px;
+    line-height: 45px;
+    float:right;
+    margin-right: 7px;
+	}
+	#btn_list {
+    color: #fff;
+    font-size: 15px;
+    border: none;
+    background: #747474;
+    padding: 0px 50px;
+    line-height: 45px;
+    float:right;
+	}
+	#container h3 {
+		margin-top: -20px;
+		margin-bottom:20px;
+	}
+</style>
+<c:if test="${not empty authUser}">
 <body>
-<div class="row">
-	<div class="container col-6 mt-1 main">
-	<h2 class="sub-header">게시글 보기</h2>
-		<form action="freeBoardmodify.do" method="post">
-		<input type="hidden" name="post_no" value="${post.post_no }" />		
-		<input type="hidden" name="pageNo" value="${param.pageNo }" />		
-			<table class="table table-striped">
-				<tbody>
-					<tr>
-						<th>NO</th>
-						<td>${post.post_no }</td>
-					</tr>
-					<tr>
-						<th>작성자</th>
-						<td>${post.name }</td>
-					</tr>
-					<tr>
-						<th>작성일</th>
-						<td>${post.regDate }</td>
-					</tr>
-					<tr>
-						<th>수정일</th>
-						<td>${post.modDate }</td>
-					</tr>
-					<tr>
-						<th>제목</th>
-						<td><input type="text" class="form-control" name="title" value="<c:out value="${post.title }"/>" /></td>
-					</tr>
-					<tr>
-						<th style="width:200px; height:200px;">내용</th>
-						<td><textarea name="body" class="form-control" id="" cols="30" rows="10">${post.body }</textarea></td>
-					</tr>
-				</tbody>
-			</table>
-			<input type="submit" value="수정완료" class="btn btn-success" onclick="if(!confirm('수정하시겠습니까?')){return false;}" />
-			<c:set var="pageNo" value="${empty param.pageNo ? '1' : param.pageNo }"/>
-				<a href="freeBoardView.do?pageNo=${pageNo }&post_no=${post.post_no}" class="btn btn-primary">취소</a>
-		</form>
-	</div>
+<u:navbar/>
+<div class="container-fluid" style=" background: url(${root}/logoimage/dosanimage00.jpg); height: 168px; width: 100%;">
+	<h2>자유게시판</h2>
 </div>
+<section id="container">
+	<h3>게시글 수정</h3>
+	<form action="freeBoardmodify" method="post">
+		<input type="hidden" name="post_no" value="${post.post_no }" />		
+		<input type="hidden" name="pageNo" value="${param.pageNo }" />
+		<div class="form-group">
+	    <label for="input1-title">제목</label>
+	    <input type="text" class="form-control" name="title" id="input1-title" value="<c:out value="${post.title }"/>" />
+	    <c:if test="${errors.notitle }">
+		    <small class="form-text text-primary">제목은 필수입니다.</small>
+	    </c:if>
+	  </div>
+	  <c:if test="${authUser.manager == 0 }">
+		  <div class="form-group d-flex">
+		 		<input type="checkbox" name="notice" style="width:18px; height:18px; margin-top:5px;" value="0"/>&nbsp;
+			  <small class="form-text text-danger"><b>공지사항</b></small>
+		  </div>
+	  </c:if>
+	  <div class="form-group">
+	    <label for="textarea1-body">내용</label>
+	    <textarea class="form-control"  cols="30" rows="10" name="body" id="textarea1-body" >${post.body }</textarea>
+	  </div>
+		<c:set var="pageNo" value="${empty param.pageNo ? '1' : param.pageNo }"/>
+		<input type="button" value="취소" onclick="location.href='freeBoardView?pageNo=${pageNo }&post_no=${post.post_no}'" id="btn_list">
+	  <input type="submit" value="수정완료" id="btn_add" onclick="if(!confirm('수정하시겠습니까?')){return false;}" />
+	</form>
+</section>
 </body>
+</c:if>
 </html>

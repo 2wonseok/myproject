@@ -11,7 +11,7 @@ import pictureboard.model.PictureBoardPage;
 
 public class PictureBoardListService {
 	private PictureBoardDao boardDao = new PictureBoardDao();
-	private int size = 10;
+	private int size = 8;
 	
 	public PictureBoardPage getBoardPage(int pageNo) {
 		try (Connection conn = ConnectionProvider.getConnection()){

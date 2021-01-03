@@ -1,5 +1,8 @@
 package member.command;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,6 +38,19 @@ public class MemberViewHandler implements CommandHandler {
 
 	private String postProcess(HttpServletRequest req, HttpServletResponse res) throws Exception {
 		String id = req.getParameter("memberid");
+		String currentPage = req.getParameter("pageNo");
+		
+		Map<String, Boolean> errors = new HashMap<>();
+		req.setAttribute("errors", errors);
+		
+		if (req.getParameter("manager") == null || req.getParameter("manager").isEmpty()) {
+			errors.put("noCheck", true);
+			Member member = viewService.getMember(id);
+			req.setAttribute("result", member);
+			req.setAttribute("currentPage", currentPage);
+			return FORM_VIEW;
+		}
+		
 		int manager = Integer.parseInt(req.getParameter("manager"));
 		
 		viewService.updateMember(id, manager);

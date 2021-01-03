@@ -7,19 +7,21 @@ import javax.servlet.http.HttpServletResponse;
 
 import controller.command.CommandHandler;
 import freeboard.model.BoardPage;
+import freeboard.model.FreeBoard;
 import freeboard.service.FreeBoardListService;
 import member.service.ListPage;
+import reply.service.ReplyService;
 
 public class FreeBoardListHandler implements CommandHandler {
 	private static final String FORM_VIEW = "freeBoardList";
-	FreeBoardListService freeBoardList = new FreeBoardListService();
+	private FreeBoardListService freeBoardList = new FreeBoardListService();
 	
 	@Override
 	public String process(HttpServletRequest req, HttpServletResponse res) throws Exception {
 		String pageNoVal = req.getParameter("pageNo");
 		String searchKeyword = req.getParameter("searchKeyword");
 		String searchField = req.getParameter("searchField");
-		
+		int replycnt = 0;
 		int pageNo = 1;
 		
 		if (pageNoVal != null) {
@@ -44,8 +46,6 @@ public class FreeBoardListHandler implements CommandHandler {
 			req.setAttribute("freeBoard", boardPage);
 			return FORM_VIEW;
 		}
-		
-		
-		}
 	}
+}
 

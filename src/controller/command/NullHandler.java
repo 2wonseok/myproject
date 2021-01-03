@@ -7,7 +7,7 @@ public class NullHandler implements CommandHandler {
 
 	@Override
 	public String process(HttpServletRequest req, HttpServletResponse res) throws Exception {
-		return "null"; // jsp 경로
+		return "errors"; // jsp 경로
 	}
 	
 }

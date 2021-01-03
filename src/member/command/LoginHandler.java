@@ -51,7 +51,7 @@ public class LoginHandler implements CommandHandler {
 		try {
 			User user = loginService.login(memberId, password);
 			req.getSession().setAttribute("authUser", user);
-			res.sendRedirect(req.getContextPath() + "/index.jsp");
+			res.sendRedirect(req.getContextPath() + "/LwsProject/mainPage");
 			return null;
 			
 		} catch (LoginFailException e) {

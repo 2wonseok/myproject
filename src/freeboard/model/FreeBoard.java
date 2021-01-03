@@ -13,6 +13,7 @@ public class FreeBoard {
 	private int readCnt;
 	private int likeCnt;
 	private int notice;
+	private int replyCnt;
 	
 	public int getPost_no() {
 		return post_no;
@@ -92,6 +93,14 @@ public class FreeBoard {
 	
 	public void setNotice(int notice) {
 		this.notice = notice;
+	}
+
+	public int getReplyCnt() {
+		return replyCnt;
+	}
+
+	public void setReplyCnt(int replyCnt) {
+		this.replyCnt = replyCnt;
 	}
 	
 	

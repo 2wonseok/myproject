@@ -41,7 +41,7 @@ public class LoginCheckFilter implements Filter {
 		HttpSession session = request.getSession(false);
 		
 		if (session == null || session.getAttribute("authUser") == null) {
-			response.sendRedirect(request.getContextPath() + "/login.do");
+			response.sendRedirect(request.getContextPath() + "/LwsProject/login");
 		} else {
 			chain.doFilter(req, res);
 		}

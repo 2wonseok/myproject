@@ -65,7 +65,7 @@ public class RemoveHandler implements CommandHandler {
 				session.invalidate();
 			}
 			
-			res.sendRedirect(req.getContextPath() + "/index.jsp");
+			res.sendRedirect(req.getContextPath() + "/LwsProject/mainPage");
 			return null;
 			
 		} catch (DuplicateIdException e) {

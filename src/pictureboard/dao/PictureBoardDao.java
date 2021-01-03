@@ -146,4 +146,42 @@ public class PictureBoardDao {
 		}
 	}
 
+	public void postDelete(Connection conn, int post_no) throws SQLException {
+		Statement stmt = null;
+		ResultSet rs = null;
+		
+		String sql = "DELETE FROM pictureboard WHERE post_no ="+post_no;
+		
+		try {
+			stmt = conn.createStatement();
+			
+			rs = stmt.executeQuery(sql);
+			
+		} finally {
+			JdbcUtil.close(rs, stmt);
+		}
+	}
+
+	public void postUpdate(Connection conn, PictureBoard pb) throws SQLException {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "";
+		if (pb.getUploadFile() == null) {
+			sql = "UPDATE pictureboard SET title = ?, body = ?, moddate = SYSDATE WHERE post_no = ?";
+		} else {
+			sql = "UPDATE pictureboard SET title = ?, body = ?, moddate = SYSDATE, uploadfile = '"+pb.getUploadFile()+"' WHERE post_no = ?";
+		}
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, pb.getTitle());
+			pstmt.setString(2, pb.getBody());
+			pstmt.setInt(3, pb.getPost_no());
+			
+			rs = pstmt.executeQuery();
+			
+		} finally {
+			JdbcUtil.close(rs, pstmt);
+		}
+	}
+
 }

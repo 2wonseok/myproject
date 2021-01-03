@@ -1,7 +1,8 @@
 package freeboard.command;
 
 import java.io.IOException;
-
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,19 +49,30 @@ public class FreeBoardModifyHandler implements CommandHandler {
 		int post_no = Integer.parseInt(no);
 		String title = req.getParameter("title");
 		String body = req.getParameter("body");
+		int notice = 1;
+		
+		Map<String, Boolean> errors = new HashMap<>();
+		req.setAttribute("errors", errors);
+		
+		if (req.getParameter("notice") != null && !req.getParameter("notice").isEmpty() ) {
+			notice = Integer.parseInt(req.getParameter("notice"));
+		}
 		
 		FreeBoard fb = new FreeBoard();
 		fb.setPost_no(post_no);
 		fb.setTitle(title);
 		fb.setBody(body);
+		fb.setNotice(notice);
 		
-		if (title == null) {
-			getProcess(req, res);
+		if (title == null || title.isEmpty()) {
+			errors.put("notitle", true);
+			FreeBoard view = freeBoardRead.postRead(post_no);
+			req.setAttribute("post", view);
 			return FORM_VIEW;
 		}
 		
 		freeBoardModify.postUpdate(fb);
-		res.sendRedirect("freeBoardView.do?pageNo="+pageNo+"&post_no="+post_no);
+		res.sendRedirect("freeBoardView?pageNo="+pageNo+"&post_no="+post_no);
 		return null;
 	}
 

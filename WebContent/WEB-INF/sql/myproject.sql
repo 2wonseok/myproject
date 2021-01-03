@@ -108,3 +108,93 @@ CREATE TABLE pictureboard (
 );
 
 commit;
+
+SELECT * FROM pictureboard;
+delete FROM pictureboard WHERE post_no=45;
+commit;
+
+CREATE TABLE boardreply (
+    replyid NUMBER GENERATED AS IDENTITY, 
+    memberid VARCHAR2(50) NOT NULL,
+    post_no NUMBER NOT NULL,
+    body VARCHAR2(1000) NOT NULL,
+    regdate DATE NOT NULL,
+    PRIMARY KEY(replyid)
+);
+SELECT post_no, title, (SELECT COUNT(*) FROM boardreply WHERE post_no = post_no) as replycnt FROM freeboard;
+
+SELECT post_no, title, (SELECT COUNT(*) FROM boardreply B WHERE B.post_no = A.post_no) as cnt FROM freeboard A;
+
+SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY regdate DESC) rn, notice, post_no, memberid, name, title,
+				body, regdate, read_cnt, like_cnt, moddate, 
+                (SELECT COUNT(*) FROM boardreply A WHERE A.post_no = B.post_no) as replycnt
+                FROM freeboard B ORDER BY notice ASC, rn ASC) 
+				WHERE rn BETWEEN 1 AND 10;
+SELECT post_no, memberid, name, title, body, regdate, moddate, read_cnt, like_cnt, notice, replycnt
+				FROM (SELECT ROW_NUMBER() OVER (ORDER BY regdate DESC) 
+				rn, post_no, memberid, name, title, body, regdate, moddate, read_cnt, like_cnt, notice, 
+                (SELECT COUNT(*) FROM boardreply A WHERE A.post_no = B.post_no) as replycnt
+				FROM freeboard B ORDER BY notice ASC, rn ASC) 
+				WHERE name LIKE '%이원석%' AND rn BETWEEN 1 AND 10;
+                
+SELECT * FROM freeboard;
+SELECT * FROM boardreply;
+SELECT COUNT(*) FROM boardreply WHERE post_no = 21;
+CREATE TABLE pictureboardreply (
+    replyid NUMBER GENERATED AS IDENTITY, 
+    memberid VARCHAR2(50) NOT NULL,
+    post_no NUMBER NOT NULL,
+    body VARCHAR2(1000) NOT NULL,
+    regdate DATE NOT NULL,
+    PRIMARY KEY(replyid)
+);
+
+SELECT * FROM pictureboardreply;
+
+SELECT title, regdate FROM freeboard WHERE ROWNUM <= 10 AND notice=0  ORDER BY regdate DESC;
+
+-- 공지 게시판
+CREATE TABLE noticeboard (
+    post_no NUMBER GENERATED AS IDENTITY,
+    memberid VARCHAR2(50) NOT NULL,
+    name VARCHAR2(50) NOT NULL,
+    title VARCHAR2(255) NOT NULL,
+    body VARCHAR2(4000),
+    regdate DATE NOT NULL,
+    moddate DATE NOT NULL,
+    read_cnt NUMBER,
+    like_cnt NUMBER,
+    notice NUMBER,
+    PRIMARY KEY (post_no)
+);
+commit;
+
+CREATE TABLE boardcommentreply (
+    cmtreplyid NUMBER GENERATED AS IDENTITY, 
+    replyid NUMBER NOT NULL,
+    memberid VARCHAR2(50) NOT NULL,
+    body VARCHAR2(1000) NOT NULL,
+    regdate DATE NOT NULL,
+    PRIMARY KEY(cmtreplyid)
+);
+SELECT * FROM boardcommentreply;
+SELECT * FROM boardreply;
+desc boardreply;
+desc boardcommentreply;
+
+ALTER TABLE boardcommentreply 
+MODIFY post_no Number not null;
+SELECT * FROM boardcommentreppost_nopost_noly;
+commit;
+UPDATE boardcommentreply SET post_no = 18;
+
+SELECT * FROM members;
+UPDATE members SET phone='010-8583-0058' WHERE memberid='test11';
+commit;
+
+ALTER TABLE members 
+MODIFY phone UNIQUE;
+
+SELECT constraint_name, status FROM user_constraints  WHERE TABLE_NAME = 'members';
+
+desc members;

@@ -1,16 +1,26 @@
 package member.service;
 
-import java.util.Date;
+import java.util.Map;
 
 public class JoinRequest {
 	private String memberId;
 	private String password;
+	private String confirmPassword;
 	private String name;
 	private String birth;
 	private String gender;
 	private String email;
 	private String phone;
 	
+	
+	public String getConfirmPassword() {
+		return confirmPassword;
+	}
+
+	public void setConfirmPassword(String confirmPassword) {
+		this.confirmPassword = confirmPassword;
+	}
+
 	public String getMemberId() {
 		return memberId;
 	}
@@ -66,8 +76,23 @@ public class JoinRequest {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
+	public void validate(Map<String, Boolean> errors) {
+		checkEmpty(errors, memberId, "memberId");
+		checkEmpty(errors, name, "name");
+		checkEmpty(errors, password, "password");
+		checkEmpty(errors, confirmPassword, "confirmPassword");
+		checkEmpty(errors, email, "email");
+		checkEmpty(errors, birth, "birth");
+		checkEmpty(errors, gender, "gender");
+		checkEmpty(errors, phone, "phone");
+	}
 	
-	
+	private void checkEmpty(Map<String, Boolean> errors, String value, String fieldName) {
+		if (value == null || value.isEmpty()) {
+			errors.put(fieldName, true);
+		}
+	}
 	
 	
 }

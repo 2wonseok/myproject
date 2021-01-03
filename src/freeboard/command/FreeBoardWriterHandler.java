@@ -1,7 +1,8 @@
 package freeboard.command;
 
 import java.io.IOException;
-
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,6 +38,9 @@ public class FreeBoardWriterHandler implements CommandHandler {
 		String content = req.getParameter("content");
 		int notice = 1;
 		
+		Map<String, Boolean> errors = new HashMap<>();
+		req.setAttribute("errors", errors);
+		
 		if (req.getParameter("notice") != null) {
 			notice = Integer.parseInt(req.getParameter("notice"));
 		}
@@ -48,11 +52,13 @@ public class FreeBoardWriterHandler implements CommandHandler {
 		fb.setBody(content);
 		fb.setNotice(notice);
 		
-		if (title != null && !title.isEmpty()) {
-			freeBoardWriter.insert(fb);
-			res.sendRedirect("freeBoard.do");
-			return null;
+		if (title == null || title.isEmpty()) {
+			errors.put("notitle", true);
+			return FORM_VIEW;
 		}
+		
+		freeBoardWriter.insert(fb);
+		res.sendRedirect("freeBoard");
 		return null;
 	}
 

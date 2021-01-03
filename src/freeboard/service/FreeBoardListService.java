@@ -43,4 +43,31 @@ public class FreeBoardListService {
 		}
 	}
 
+	public BoardPage getMainPage(int pageNo) {
+		try (Connection conn = ConnectionProvider.getConnection()) {
+			int total = 0;
+			
+			List<FreeBoard> content = boardDao.getMainPage(conn);
+			
+			return new BoardPage(total, pageNo, size, content);
+			
+		} catch (SQLException e)  {
+			throw new RuntimeException(e);
+		}
+		
+	}
+
+	public BoardPage getSubPage(int pageNo) {
+		try (Connection conn = ConnectionProvider.getConnection()) {
+			int total = 0;
+			
+			List<FreeBoard> content = boardDao.getSubPage(conn);
+			
+			return new BoardPage(total, pageNo, size, content);
+			
+		} catch (SQLException e)  {
+			throw new RuntimeException(e);
+		}
+	}
+
 }
