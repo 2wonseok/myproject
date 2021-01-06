@@ -161,7 +161,7 @@
 							<td>
 								<c:choose>
 									<c:when test="${result.notice == 0 }">관리자</c:when>
-									<c:otherwise>${result.memberid }</c:otherwise>
+									<c:otherwise>${result.name }</c:otherwise>
 								</c:choose>
 							</td>
 							<td>${result.regDate }</td>
@@ -209,7 +209,7 @@
 						<td>
 							<c:choose>
 								<c:when test="${boardData.notice == 0 }">관리자</c:when>
-								<c:otherwise>${boardData.memberid }</c:otherwise>
+								<c:otherwise>${boardData.name }</c:otherwise>
 							</c:choose>
 						</td>
 						<td>${boardData.regDate }</td>

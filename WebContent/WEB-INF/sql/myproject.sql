@@ -2,10 +2,10 @@ CREATE TABLE members (
     memberid VARCHAR2(50) PRIMARY KEY,
     password VARCHAR2(30) NOT NULL,
     name VARCHAR2(50) NOT NULL,
-    birth DATE NOT NULL,
+    birth VARCHAR2(20) NOT NULL,
     gender VARCHAR2(20) NOT NULL,
-    email VARCHAR2(50) NOT NULL,
-    phone VARCHAR2(50) NOT NULL,
+    email VARCHAR2(50) UNIQUE,
+    phone VARCHAR2(50) UNIQUE,
     manager NUMBER NOT NULL,
     regdate DATE NOT NULL
 );
@@ -175,6 +175,7 @@ CREATE TABLE boardcommentreply (
     memberid VARCHAR2(50) NOT NULL,
     body VARCHAR2(1000) NOT NULL,
     regdate DATE NOT NULL,
+    post_no Number not null,
     PRIMARY KEY(cmtreplyid)
 );
 SELECT * FROM boardcommentreply;
@@ -198,3 +199,18 @@ MODIFY phone UNIQUE;
 SELECT constraint_name, status FROM user_constraints  WHERE TABLE_NAME = 'members';
 
 desc members;
+
+CREATE TABLE pictureboardcommentreply (
+    cmtreplyid NUMBER GENERATED AS IDENTITY, 
+    replyid NUMBER NOT NULL,
+    memberid VARCHAR2(50) NOT NULL,
+    body VARCHAR2(1000) NOT NULL,
+    regdate DATE NOT NULL,
+    post_no Number not null,
+    PRIMARY KEY(cmtreplyid)
+);
+
+SELECT * FROM pictureboardcommentreply;
+SELECT * FROM pictureboardreply;
+SELECT * FROM pictureboard;
+commit;

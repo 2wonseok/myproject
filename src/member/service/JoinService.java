@@ -20,10 +20,22 @@ public class JoinService {
 			conn.setAutoCommit(false);
 			
 			Member member = memberDao.selectById(conn, joinReq.getMemberId());
+			Member checkEmail = memberDao.selectByEmail(conn, joinReq.getEmail());
+			Member checkPhone = memberDao.selectByPhone(conn, joinReq.getPhone());
 			
 			if (member != null) {
 				JdbcUtil.rollback(conn);
 				throw new DuplicateIdException();
+			}
+			
+			if (checkEmail != null) {
+				JdbcUtil.rollback(conn);
+				throw new DuplicateEmailException();
+			}
+			
+			if (checkPhone != null) {
+				JdbcUtil.rollback(conn);
+				throw new DuplicatePhoneException();
 			}
 			
 			Member m = new Member();

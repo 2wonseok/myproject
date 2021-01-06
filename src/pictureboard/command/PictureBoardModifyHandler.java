@@ -1,5 +1,6 @@
 package pictureboard.command;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +19,7 @@ import pictureboard.service.PictureBoardReadService;
 
 public class PictureBoardModifyHandler implements CommandHandler {
 	private static final String FORM_VIEW = "pictureBoardModify";
+	private static final String UPLOAD_DIR = "upload";
 	private PictureBoardReadService pictureBoardRead = new PictureBoardReadService();
 	private PictureBoardModifyService pictureBoardModify = new PictureBoardModifyService();
 	
@@ -50,13 +52,23 @@ public class PictureBoardModifyHandler implements CommandHandler {
 	private String postProcess(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		MultipartRequest multi = null;
 		int sizeLimit = 10 * 1024 * 1024 ; // 10MB
-		String savaPath = "C:\\Users\\이원석\\Documents\\myworkspace\\eclipse-workspace\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\myproject\\upload";
-
+//		String savaPath = "C:\\Users\\이원석\\Documents\\myworkspace\\eclipse-workspace\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\myproject\\upload";
+//		String savaPath = req.getContextPath()+"/upload";
+		String applicationPath = req.getServletContext().getRealPath("");
+		String uploadFilePath = applicationPath + UPLOAD_DIR;
+		
 		Map<String, Boolean> errors = new HashMap<>();
 		req.setAttribute("errors", errors);
 		
+		File fileSaveDir = new File(uploadFilePath);
+		
+		// 파일 경로 없으면 생성
+		if (!fileSaveDir.exists()) {
+			fileSaveDir.mkdirs();
+		}
+		
 		try {
-			multi = new MultipartRequest(req, savaPath, sizeLimit, "utf-8", new DefaultFileRenamePolicy());
+			multi = new MultipartRequest(req, uploadFilePath, sizeLimit, "utf-8", new DefaultFileRenamePolicy());
 			
 		} catch (Exception e) {
 			e.printStackTrace();

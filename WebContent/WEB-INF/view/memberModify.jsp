@@ -107,6 +107,22 @@
 				</td>
 			</tr>
 			<tr>
+				<th>변경할 비밀번호</th>
+				<td>
+					<input type="password" name="changePw" class="form-control" />
+				</td>
+			</tr>
+			<tr>
+			<tr>
+				<th>변경할 비밀번호 확인</th>
+				<td>
+					<input type="password" name="changeConfirmPw" class="form-control" />
+					<c:if test="${errors.changePw }">
+				    <small class="form-text text-primary">변경할 패스워드가 일치하지 않습니다.</small>
+			    </c:if>
+				</td>
+			</tr>
+			<tr>
 				<th>이름</th>
 				<td>${modify.name }</td>
 			</tr>

@@ -116,6 +116,9 @@
 	  	<c:if test="${errors.phoneIsnull }">
 		    <small class="form-text text-primary">연락처를 제대로 입력해주세요.</small>
 	    </c:if><br />
+	    <c:if test="${errors.duplicatePhone }">
+				<small class="form-text text-danger">이미 사용중인 휴대폰 번호입니다..</small>
+			</c:if><br />
 		    <label for="input2-name">이메일</label>
 		  <div class="form-group d-flex">
 		    <input type="text" class="form-control" name="email1" style="width:50%;" id="input2-name" value="${param.email}" />
@@ -131,6 +134,9 @@
 		    <c:if test="${errors.emailnull }">
 			    <small class="form-text text-primary">이메일을 제대로 입력해주세요.</small>
 		    </c:if><br />
+		   	<c:if test="${errors.duplicateEmail }">
+					<small class="form-text text-danger">이미 사용중인 이메일입니다.</small>
+				</c:if><br />
 		  <input type="submit"  value="가입완료" id="btn_add" />
 	</form>
 </section>

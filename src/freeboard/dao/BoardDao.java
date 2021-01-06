@@ -181,7 +181,7 @@ public class BoardDao {
 	public int selectContentCount(Connection conn, String searchKeyword, String searchField) throws SQLException {
 		Statement stmt = null;
 		ResultSet rs = null;
-		String sql = "SELECT COUNT(*) FROM freeboard WHERE "+searchKeyword+" LIKE '%"+searchField+"%'";
+		String sql = "SELECT COUNT(*) FROM freeboard WHERE UPPER ("+searchKeyword+") LIKE UPPER ('%"+searchField+"%')";
 		
 		try {
 			stmt = conn.createStatement();
@@ -215,7 +215,7 @@ public class BoardDao {
 				+"rn, post_no, memberid, name, title, body, regdate, moddate, read_cnt, like_cnt, notice, "
 				+"(SELECT COUNT(*) FROM boardreply A WHERE A.post_no = B.post_no) as replycnt "
 				+"FROM freeboard B ORDER BY notice ASC, rn ASC) "
-				+"WHERE "+searchKeyword+" LIKE '%"+searchField+"%' AND rn BETWEEN "+startPage+" AND "+endPage;
+				+"WHERE UPPER ("+searchKeyword+") LIKE UPPER ('%"+searchField+"%') AND rn BETWEEN "+startPage+" AND "+endPage;
 			
 		} else {
 			sql = "SELECT post_no, memberid, name, title, body, regdate, moddate, read_cnt, like_cnt, notice, replycnt "
@@ -223,7 +223,7 @@ public class BoardDao {
 					+"rn, post_no, memberid, name, title, body, regdate, moddate, read_cnt, like_cnt, notice, "
 					+"(SELECT COUNT(*) FROM boardreply A WHERE A.post_no = B.post_no) as replycnt "
 					+"FROM freeboard B ORDER BY notice ASC, rn ASC) "
-					+"WHERE "+searchKeyword+" LIKE '%"+searchField+"%'";
+					+"WHERE UPPER ("+searchKeyword+") LIKE UPPER ('%"+searchField+"%')";
 		}
 		
 		List<FreeBoard> freeBoard = new ArrayList<FreeBoard>();

@@ -9,7 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import controller.command.CommandHandler;
+import member.service.DuplicateEmailException;
 import member.service.DuplicateIdException;
+import member.service.DuplicatePhoneException;
 import member.service.JoinRequest;
 import member.service.JoinService;
 
@@ -91,6 +93,12 @@ public class JoinHandler implements CommandHandler {
 			return "mainPage";
 		} catch (DuplicateIdException e) {
 			errors.put("duplicateId", Boolean.TRUE);
+			return FORM_VIEW;
+		} catch (DuplicateEmailException e) {
+			errors.put("duplicateEmail", Boolean.TRUE);
+			return FORM_VIEW;
+		} catch (DuplicatePhoneException e) {
+			errors.put("duplicatePhone", Boolean.TRUE);
 			return FORM_VIEW;
 		}
 

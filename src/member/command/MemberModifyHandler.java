@@ -45,18 +45,28 @@ public class MemberModifyHandler implements CommandHandler {
 		String confirmPw = req.getParameter("confirmPw");
 		String password = req.getParameter("password");
 		String id = req.getParameter("id");
+		String changePw = req.getParameter("changePw");
+		String changeConfirmPw = req.getParameter("changeConfirmPw");
 		
 		Member m = new Member();
 		m.setMemberid(req.getParameter("id"));
 		m.setBirth(req.getParameter("birth"));
 		m.setEmail(req.getParameter("email"));
 		m.setPhone(req.getParameter("phone"));
-		m.setPassword(req.getParameter("password"));
+		m.setPassword(changePw);
 		
 		Map<String, Boolean> errors = new HashMap<>();
 		
 		if (!confirmPw.equals(password)) {
 			errors.put("pw", true);
+			Member mem = modifyService.selectModify(id);
+			req.setAttribute("modify", mem);
+			req.setAttribute("errors", errors);
+			return FORM_VIEW;
+		}
+		
+		if (changePw != null && !changePw.equals(changeConfirmPw)) {
+			errors.put("changePw", true);
 			Member mem = modifyService.selectModify(id);
 			req.setAttribute("modify", mem);
 			req.setAttribute("errors", errors);

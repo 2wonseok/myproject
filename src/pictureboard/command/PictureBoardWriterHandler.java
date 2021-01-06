@@ -23,6 +23,7 @@ import pictureboard.service.PictureBoardWriterService;
 
 public class PictureBoardWriterHandler implements CommandHandler {
 	private static final String FORM_VIEW = "pictureBoardWriter";
+	private static final String UPLOAD_DIR = "upload";
 	private PictureBoardWriterService pictureBoardWriter = new PictureBoardWriterService();
 	
 	@Override
@@ -45,15 +46,26 @@ public class PictureBoardWriterHandler implements CommandHandler {
 	private String postProcess(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		MultipartRequest multi = null;
 		int sizeLimit = 10 * 1024 * 1024 ; // 10MB
-//		String savaPath = "C:\\imgfile";
-		String savaPath = "C:\\Users\\이원석\\Documents\\myworkspace\\eclipse-workspace\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\myproject\\upload";
+//		String savaPath = req.getContextPath()+"/upload";
+		String applicationPath = req.getServletContext().getRealPath("");
+		String uploadFilePath = applicationPath + UPLOAD_DIR;
+//		System.out.println(applicationPath);
+//		System.out.println(uploadFilePath);
+//		String savaPath = "C:\\Users\\이원석\\Documents\\myworkspace\\eclipse-workspace\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\myproject\\upload";
 		
 		Map<String, Boolean> errors = new HashMap<>();
 		req.setAttribute("errors", errors);
 		
+		File fileSaveDir = new File(uploadFilePath);
+		
+		// 파일 경로 없으면 생성
+		if (!fileSaveDir.exists()) {
+			fileSaveDir.mkdirs();
+		}
+		
 		try {
 			
-			multi = new MultipartRequest(req, savaPath, sizeLimit, "utf-8", new DefaultFileRenamePolicy());
+			multi = new MultipartRequest(req, uploadFilePath, sizeLimit, "utf-8", new DefaultFileRenamePolicy());
 			
 		} catch (Exception e) {
 			e.printStackTrace();

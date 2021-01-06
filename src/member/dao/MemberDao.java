@@ -88,7 +88,7 @@ public class MemberDao {
 	public int selectCountSearch(Connection conn, String searchKeyword, String searchField) throws SQLException {
 		Statement stmt = null;
 		ResultSet rs = null;
-		String sql = "SELECT COUNT(*) FROM members WHERE "+searchKeyword+" LIKE '%"+searchField+"%'";
+		String sql = "SELECT COUNT(*) FROM members WHERE UPPER ("+searchKeyword+") LIKE UPPER ('%"+searchField+"%')";
 		
 		try {
 			stmt = conn.createStatement();
@@ -178,24 +178,24 @@ public class MemberDao {
 			sql = "SELECT name, memberid, gender, phone, regdate FROM (SELECT ROW_NUMBER() OVER (ORDER BY regdate DESC) "
 				+"rn, name, memberid, gender, phone, regdate "
 				+"FROM members) "
-				+"WHERE "+searchKeyword+" LIKE '%"+searchField+"%' AND rn BETWEEN "+startPage+" AND "+endPage;
+				+"WHERE UPPER ("+searchKeyword+") LIKE UPPER ('%"+searchField+"%') AND rn BETWEEN "+startPage+" AND "+endPage;
 		} else {
 			sql = "SELECT name, memberid, gender, phone, regdate FROM (SELECT ROW_NUMBER() OVER (ORDER BY regdate DESC) "
 					+"rn, name, memberid, gender, phone, regdate "
 					+"FROM members) "
-					+"WHERE "+searchKeyword+" LIKE '%"+searchField+"%'";
+					+"WHERE UPPER ("+searchKeyword+") LIKE UPPER ('%"+searchField+"%')";
 		}
 		
 		if (searchKeyword.equals("gender") && total > 10) {
 			sql = "SELECT name, memberid, gender, phone, regdate FROM (SELECT ROW_NUMBER() OVER (ORDER BY regdate DESC) "
 					+"rn, name, memberid, gender, phone, regdate "
 					+"FROM members) "
-					+"WHERE "+searchKeyword+" = '"+searchField+"' AND rn BETWEEN "+startPage+" AND "+endPage;
+					+"WHERE UPPER ("+searchKeyword+") = UPPER ('"+searchField+"') AND rn BETWEEN "+startPage+" AND "+endPage;
 		} else if (searchKeyword.equals("gender") && total < 10) {
 			sql = "SELECT name, memberid, gender, phone, regdate FROM (SELECT ROW_NUMBER() OVER (ORDER BY regdate DESC) "
 					+"rn, name, memberid, gender, phone, regdate "
 					+"FROM members) "
-					+"WHERE "+searchKeyword+" = '"+searchField+"'";
+					+"WHERE UPPER ("+searchKeyword+") = UPPER ('"+searchField+"')";
 		}
 		
 		List<Member> member = new ArrayList<>();
@@ -308,8 +308,13 @@ public class MemberDao {
 	public int memberUpdate(Connection conn, Member m) throws SQLException {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
+		String sql = "";
 		
-		String sql = "UPDATE members SET birth = ?, email = ?, phone = ? WHERE memberid = ?";
+		if (m.getPassword() == null || m.getPassword().isEmpty()) {
+			sql = "UPDATE members SET birth = ?, email = ?, phone = ? WHERE memberid = ?";
+		} else {
+			sql = "UPDATE members SET birth = ?, email = ?, phone = ?, password = '"+m.getPassword()+"' WHERE memberid = ?";
+		}
 		
 		try {
 			pstmt = conn.prepareStatement(sql);
@@ -324,6 +329,56 @@ public class MemberDao {
 			
 		} finally {
 			JdbcUtil.close(rs, conn);
+		}
+	}
+
+	public Member selectByEmail(Connection conn, String email) throws SQLException {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		Member member = null;
+		String sql = "SELECT memberid, name, email, password, manager FROM members WHERE email = ?";
+		
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, email);
+			rs = pstmt.executeQuery();
+		
+			if (rs.next()) {
+				member = new Member();
+				member.setMemberid(rs.getString(1));
+				member.setName(rs.getString(2));
+				member.setEmail(rs.getString(3));
+				member.setPassword(rs.getString(4));
+				member.setManager(rs.getInt(5));
+			}
+			return member;
+		} finally {
+			JdbcUtil.close(rs, pstmt);
+		}
+	}
+
+	public Member selectByPhone(Connection conn, String phone) throws SQLException {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		Member member = null;
+		String sql = "SELECT memberid, name, email, password, manager FROM members WHERE phone = ?";
+		
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, phone);
+			rs = pstmt.executeQuery();
+		
+			if (rs.next()) {
+				member = new Member();
+				member.setMemberid(rs.getString(1));
+				member.setName(rs.getString(2));
+				member.setEmail(rs.getString(3));
+				member.setPassword(rs.getString(4));
+				member.setManager(rs.getInt(5));
+			}
+			return member;
+		} finally {
+			JdbcUtil.close(rs, pstmt);
 		}
 	}
 
